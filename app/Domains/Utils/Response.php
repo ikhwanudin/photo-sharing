@@ -7,7 +7,6 @@ class Response
     public static function success(array $data): array
     {
         return [
-            'success' => true,
             'data' => $data,
         ];
     }
@@ -15,7 +14,6 @@ class Response
     public static function fail(string $message, array $data = []): array
     {
         return [
-            'success' => false,
             'message' => $message,
             'data' => $data,
         ];

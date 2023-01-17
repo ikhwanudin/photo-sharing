@@ -16,13 +16,12 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 
 Route::group([
-    'prefix' => 'v1/photos'
-], function(){
+    'prefix' => 'v1/photos',
+], function () {
     Route::resource('/', ApiPhotoController::class)
         ->except(['index', 'show'])
         ->middleware('auth:sanctum');
 
     Route::get('/', [ApiPhotoController::class, 'index']);
     Route::get('/{id}', [ApiPhotoController::class, 'show']);
-
 });
