@@ -3,9 +3,9 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class JsonMiddleware
 {
@@ -19,12 +19,13 @@ class JsonMiddleware
     /**
      * JsonMiddleware constructor.
      *
-     * @param ResponseFactory $factory
+     * @param  ResponseFactory  $factory
      */
     public function __construct(ResponseFactory $factory)
     {
         $this->factory = $factory;
     }
+
     /**
      * Handle an incoming request.
      *
@@ -38,7 +39,7 @@ class JsonMiddleware
 
         $response = $next($request);
 
-        if (!$response instanceof JsonResponse) {
+        if (! $response instanceof JsonResponse) {
             $response = $this->factory->json(
                 $response->content(),
                 $response->status(),

@@ -19,7 +19,7 @@ class UserAuthResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'access_token' => $this->token,
-            'token_type' => 'Bearer'
+            'token_type' => 'Bearer',
         ]);
     }
 }

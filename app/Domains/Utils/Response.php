@@ -8,7 +8,7 @@ class Response
     {
         return [
             'success' => true,
-            'data' => $data
+            'data' => $data,
         ];
     }
 
@@ -17,7 +17,7 @@ class Response
         return [
             'success' => false,
             'message' => $message,
-            'data' => $data
+            'data' => $data,
         ];
     }
 }

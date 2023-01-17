@@ -6,7 +6,6 @@ use App\Domains\Auth\Actions\GenerateNewTokenAction;
 use App\Domains\Auth\Resources\UserAuthResource;
 use App\Domains\Utils\Response;
 use App\Models\User;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules;
@@ -20,7 +19,7 @@ class LoginUserController
             'password' => ['required', Rules\Password::defaults()],
         ]);
 
-        if (!Auth::attempt($request->only('email', 'password'))) {
+        if (! Auth::attempt($request->only('email', 'password'))) {
             return response()
                 ->json(
                     Response::fail(message: 'Invalid login details'),
