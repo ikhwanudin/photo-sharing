@@ -12,13 +12,14 @@ Route::post('/register', [RegisteredUserController::class, 'store'])
 Route::post('/login', LoginUserController::class)->name('login');
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return $request->user();
+    return new \App\Domains\User\Resources\UserResource($request->user());
 });
 
 Route::group([
     'prefix' => 'v1/photos',
 ], function () {
     Route::resource('/', ApiPhotoController::class)
+        ->parameter('', 'id')
         ->except(['index', 'show'])
         ->middleware('auth:sanctum');
 

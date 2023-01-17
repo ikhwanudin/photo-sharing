@@ -3,7 +3,6 @@
 namespace App\Domains\Photo\Actions;
 
 use App\Domains\Photo\Repositories\PhotoEloquentRepository;
-use App\Domains\Utils\Response;
 use App\Models\Photo;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Cache;
@@ -14,13 +13,13 @@ class GetPhotoByIdAction
     {
         try {
             return Cache::remember(
-                Photo::CACHE_KEY . '_' . $id,
+                Photo::CACHE_KEY.'_'.$id,
                 86400,
-                fn() => (new PhotoEloquentRepository)->getPhotoById($id)->firstOrFail()
+                fn () => (new PhotoEloquentRepository)->getPhotoById($id)->firstOrFail()
             );
         } catch (ModelNotFoundException) {
             return (object) [
-                'message' => 'Photo Not Found'
+                'message' => 'Photo Not Found',
             ];
         }
     }
