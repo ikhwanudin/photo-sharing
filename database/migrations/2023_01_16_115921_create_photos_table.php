@@ -14,12 +14,12 @@ return new class extends Migration
     public function up()
     {
         Schema::create('photos', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->uuid('secret_id')->primary();
+            $table->uuid('id')->index();
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('path')->nullable();
             $table->text('meta');
-            $table->enum('uploading_state', ['uploading', 'uploaded', 'failed']);
             $table->foreignUuid('user_id')
                 ->constrained('users')
                 ->cascadeOnUpdate()

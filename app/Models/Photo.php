@@ -10,7 +10,15 @@ class Photo extends Model
 {
     use HasFactory, HasUuids;
 
+    const CACHE_KEY = 'photos';
+
+    protected $primaryKey = 'secret_id';
+
     protected $guarded = [];
+
+    protected $hidden = [
+        'secret_key',
+    ];
 
     public function user()
     {
