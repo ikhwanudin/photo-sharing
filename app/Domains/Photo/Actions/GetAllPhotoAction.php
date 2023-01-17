@@ -2,6 +2,7 @@
 
 namespace App\Domains\Photo\Actions;
 
+use App\Domains\Photo\Repositories\PhotoEloquentRepository;
 use App\Models\Photo;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
@@ -16,8 +17,8 @@ class GetAllPhotoAction
             $cache_key ?: Photo::CACHE_KEY,
             86400,
             function () {
-                return Photo::with('user')
-                    ->orderByDesc('created_at')
+                return (new PhotoEloquentRepository())
+                    ->getAllPhotos()
                     ->paginate($this->paginate_number);
             }
         );

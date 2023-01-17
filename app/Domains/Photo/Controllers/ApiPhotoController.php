@@ -3,9 +3,11 @@
 namespace App\Domains\Photo\Controllers;
 
 use App\Domains\Photo\Actions\GetAllPhotoAction;
+use App\Domains\Photo\Actions\GetPhotoByIdAction;
 use App\Domains\Photo\Actions\UploadNewPhotoAction;
 use App\Domains\Photo\Resources\PhotoCollection;
 use App\Domains\Photo\Resources\PhotoResource;
+use App\Domains\Utils\Response;
 use App\Http\Controllers\Controller;
 use App\Models\Photo;
 use Illuminate\Http\Request;
@@ -61,12 +63,12 @@ class ApiPhotoController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        //
+        $photo = (new GetPhotoByIdAction)($id);
+
+        return new PhotoResource($photo);
     }
 
     /**
