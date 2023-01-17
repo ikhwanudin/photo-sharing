@@ -10,7 +10,7 @@ class PhotoResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
      */
     public function toArray($request)
@@ -20,7 +20,7 @@ class PhotoResource extends JsonResource
             'title' => $this->title,
             'path' => $this->path,
             'description' => $this->description,
-            'user' => new UserResource($this->user)
+            'user' => new UserResource($this->user),
         ];
     }
 }

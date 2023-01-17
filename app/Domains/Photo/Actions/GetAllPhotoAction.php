@@ -3,9 +3,7 @@
 namespace App\Domains\Photo\Actions;
 
 use App\Models\Photo;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Cache;
 
 class GetAllPhotoAction

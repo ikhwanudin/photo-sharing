@@ -15,7 +15,7 @@ class PhotoCollection extends ResourceCollection
     public function toArray($request)
     {
         return [
-            'data' => PhotoResource::collection($this->collection)
+            'data' => PhotoResource::collection($this->collection),
         ];
     }
 }

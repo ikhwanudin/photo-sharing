@@ -6,9 +6,7 @@ use App\Models\Photo;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Http\Request;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Cache;
@@ -22,8 +20,7 @@ class UploadNewPhotoAction implements ShouldQueue
         public array $request,
         public string $path,
         public string $photo_id
-    )
-    {
+    ) {
     }
 
     public function handle()
@@ -34,7 +31,7 @@ class UploadNewPhotoAction implements ShouldQueue
             'id' => $this->photo_id,
             'title' => $this->request['title'],
             'description' => $this->request['description'] ?? null,
-            'path' => $this->path
+            'path' => $this->path,
         ]);
 
         $this->user->photos()->save($photo);
