@@ -8,7 +8,9 @@ class PhotoEloquentRepository
 {
     public function main()
     {
-        return Photo::query();
+        return Photo::query()
+            ->withCount('like')
+            ->with('user');
     }
 
     public function getAllPhotos()

@@ -15,7 +15,9 @@ class GetPhotoByIdAction
             return Cache::remember(
                 Photo::CACHE_KEY.'_'.$id,
                 86400,
-                fn () => (new PhotoEloquentRepository)->getPhotoById($id)->firstOrFail()
+                fn () => (new PhotoEloquentRepository)
+                    ->getPhotoById($id)
+                    ->firstOrFail()
             );
         } catch (ModelNotFoundException) {
             return (object) [

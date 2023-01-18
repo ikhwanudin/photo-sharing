@@ -28,6 +28,7 @@ class LoginUserController
         }
 
         $user = User::where('email', $request->email)->first();
+        $user->tokens()->delete();
         $user->token = (new GenerateNewTokenAction)($user);
 
         return new UserAuthResource($user);

@@ -24,4 +24,9 @@ class Photo extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function like()
+    {
+        return $this->hasMany(LikePhoto::class, 'photo_id', 'id');
+    }
 }

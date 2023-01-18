@@ -27,6 +27,7 @@ class PhotoResource extends JsonResource
             'title' => $this->title,
             'path' => $this->path,
             'description' => $this->description,
+            'likes' => $this->like_count ?? 0,
             'user' => new UserResource($this->user),
         ];
     }
