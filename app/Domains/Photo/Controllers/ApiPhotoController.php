@@ -4,16 +4,15 @@ namespace App\Domains\Photo\Controllers;
 
 use App\Domains\Photo\Actions\GetAllPhotoAction;
 use App\Domains\Photo\Actions\GetPhotoByIdAction;
+use App\Domains\Photo\Actions\UpdatePhotoByIdAction;
 use App\Domains\Photo\Actions\UploadNewPhotoAction;
 use App\Domains\Photo\Jobs\RemoveFilePhotoJob;
+use App\Domains\Photo\Requests\EditPhotoRequest;
 use App\Domains\Photo\Requests\StorePhotoRequest;
 use App\Domains\Photo\Resources\PhotoCollection;
 use App\Domains\Photo\Resources\PhotoResource;
-use App\Domains\Utils\Response;
 use App\Http\Controllers\Controller;
 use App\Models\Photo;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
 
 class ApiPhotoController extends Controller
 {
@@ -25,8 +24,8 @@ class ApiPhotoController extends Controller
         $page = request('page');
         $photos = new GetAllPhotoAction;
 
-        $photos = ! empty($page) ?
-            $photos(Photo::CACHE_KEY.'_page_'.$page) :
+        $photos = !empty($page) ?
+            $photos(Photo::CACHE_KEY . '_page_' . $page) :
             $photos();
 
         return new PhotoCollection($photos);
@@ -55,13 +54,22 @@ class ApiPhotoController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(EditPhotoRequest $request, $id)
     {
-        //
+        //get photo from cache
+        $photo = (new GetPhotoByIdAction)($id);
+
+        //check if photo empty or not
+        if (!empty($photo->id)) {
+            $photo = (new UpdatePhotoByIdAction)(
+                request: $request,
+                id: $id,
+                field_to_be_edit: $request->validated()
+            );
+        }
+
+        return new PhotoResource($photo);
     }
 
     /**
@@ -72,7 +80,7 @@ class ApiPhotoController extends Controller
     {
         $photo = (new GetPhotoByIdAction)($id);
 
-        if(!empty($photo->id)){
+        if (!empty($photo->id)) {
             dispatch(new RemoveFilePhotoJob($photo));
         }
 

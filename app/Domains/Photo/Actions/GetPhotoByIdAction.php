@@ -20,6 +20,8 @@ class GetPhotoByIdAction
         } catch (ModelNotFoundException) {
             return (object) [
                 'message' => 'Photo Not Found',
+                'httpcode' => '404',
+                'httpmessage' => 'Not Found'
             ];
         }
     }

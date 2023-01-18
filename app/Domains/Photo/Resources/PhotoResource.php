@@ -17,7 +17,7 @@ class PhotoResource extends JsonResource
     {
         if (empty($this->id)) {
             return [
-                'message' => $this->message,
+                'message' => $this->message ?? '',
                 'data' => [],
             ];
         }
@@ -34,7 +34,7 @@ class PhotoResource extends JsonResource
     public function withResponse($request, $response)
     {
         if (empty($this->id)) {
-            $response->setStatusCode(404, 'Photo Not Found');
+            $response->setStatusCode($this->httpcode ?? 500, $this->httpmessage ?? 'internal server error');
         }
     }
 }
