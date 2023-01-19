@@ -15,12 +15,27 @@ class PhotoResource extends JsonResource
      */
     public function toArray($request)
     {
+        if (empty($this->id)) {
+            return [
+                'message' => $this->message ?? '',
+                'data' => [],
+            ];
+        }
+
         return [
             'id' => $this->id,
             'title' => $this->title,
             'path' => $this->path,
             'description' => $this->description,
+            'likes' => $this->like_count ?? 0,
             'user' => new UserResource($this->user),
         ];
+    }
+
+    public function withResponse($request, $response)
+    {
+        if (empty($this->id)) {
+            $response->setStatusCode($this->httpcode ?? 500, $this->httpmessage ?? 'internal server error');
+        }
     }
 }

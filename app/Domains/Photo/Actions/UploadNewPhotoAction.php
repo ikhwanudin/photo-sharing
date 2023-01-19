@@ -2,38 +2,33 @@
 
 namespace App\Domains\Photo\Actions;
 
-use App\Models\Photo;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Cache;
+use App\Domains\Photo\Jobs\SaveNewPhotoJob;
+use App\Domains\Photo\Requests\StorePhotoRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
-class UploadNewPhotoAction implements ShouldQueue
+class UploadNewPhotoAction
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    public function __construct(
-        public Authenticatable $user,
-        public array $request,
-        public string $path,
-        public string $photo_id
-    ) {
-    }
-
-    public function handle()
+    public function __invoke(StorePhotoRequest $request)
     {
-        Cache::forget(Photo::CACHE_KEY);
+        $user = Auth::user();
 
-        $photo = new Photo([
-            'id' => $this->photo_id,
-            'title' => $this->request['title'],
-            'description' => $this->request['description'] ?? null,
-            'path' => $this->path,
-        ]);
+        $path = $request->file('photo')->store($user->id);
+        $photo_id = Str::uuid();
 
-        $this->user->photos()->save($photo);
+        dispatch(new SaveNewPhotoJob(
+            user: $user,
+            request: $request->only('title', 'description'),
+            path: $path,
+            photo_id: $photo_id)
+        );
+
+        return (object) [
+            'id' => $photo_id,
+            'title' => $request['title'],
+            'path' => $path,
+            'description' => $request['description'] ?? null,
+            'user' => $user,
+        ];
     }
 }

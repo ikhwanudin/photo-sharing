@@ -3,14 +3,16 @@
 namespace App\Domains\Photo\Controllers;
 
 use App\Domains\Photo\Actions\GetAllPhotoAction;
+use App\Domains\Photo\Actions\GetPhotoByIdAction;
+use App\Domains\Photo\Actions\UpdatePhotoByIdAction;
 use App\Domains\Photo\Actions\UploadNewPhotoAction;
+use App\Domains\Photo\Jobs\RemoveFilePhotoJob;
+use App\Domains\Photo\Requests\EditPhotoRequest;
+use App\Domains\Photo\Requests\StorePhotoRequest;
 use App\Domains\Photo\Resources\PhotoCollection;
 use App\Domains\Photo\Resources\PhotoResource;
 use App\Http\Controllers\Controller;
 use App\Models\Photo;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 
 class ApiPhotoController extends Controller
 {
@@ -22,8 +24,9 @@ class ApiPhotoController extends Controller
         $page = request('page');
         $photos = new GetAllPhotoAction;
 
-        $photos = ! empty($page) ?
-            $photos(Photo::CACHE_KEY.'_page_'.$page) :
+        $photos = !empty($page) ?
+            $photos(Photo::CACHE_KEY . '_page_' . $page) :
+
             $photos();
 
         return new PhotoCollection($photos);
@@ -32,63 +35,56 @@ class ApiPhotoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StorePhotoRequest $request)
     {
-        $request->validate([
-            'title' => ['required', 'string'],
-            'photo' => ['required', 'image', 'mimes:jpg,png,jpeg', 'max:2048'],
-        ]);
-
-        $user = Auth::user();
-
-        $path = $request->file('photo')->store($user->id);
-        $photo_id = Str::uuid();
-
-        $request = $request->only(['title', 'description']);
-        dispatch(new UploadNewPhotoAction($user, $request, $path, $photo_id));
-
-        $data = (object) [
-            'photo_id' => $photo_id,
-            'title' => $request['title'],
-            'path' => $path,
-            'description' => $request['description'] ?? null,
-            'user' => $user,
-        ];
+        $data = (new UploadNewPhotoAction)($request);
 
         return new PhotoResource($data);
     }
 
     /**
      * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        //
+        $photo = (new GetPhotoByIdAction)($id);
+
+        return new PhotoResource($photo);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(EditPhotoRequest $request, $id)
     {
-        //
+        //get photo from cache
+        $photo = (new GetPhotoByIdAction)($id);
+
+        //check if photo empty or not
+        if (!empty($photo->id)) {
+            $photo = (new UpdatePhotoByIdAction)(
+                request: $request,
+                id: $id,
+                field_to_be_edit: $request->validated()
+            );
+        }
+
+        return new PhotoResource($photo);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        //
+        $photo = (new GetPhotoByIdAction)($id);
+
+        if (!empty($photo->id)) {
+            dispatch(new RemoveFilePhotoJob($photo));
+        }
+
+        return new PhotoResource($photo);
     }
 }
