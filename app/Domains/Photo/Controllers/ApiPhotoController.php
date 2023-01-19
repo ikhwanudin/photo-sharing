@@ -26,6 +26,7 @@ class ApiPhotoController extends Controller
 
         $photos = !empty($page) ?
             $photos(Photo::CACHE_KEY . '_page_' . $page) :
+
             $photos();
 
         return new PhotoCollection($photos);

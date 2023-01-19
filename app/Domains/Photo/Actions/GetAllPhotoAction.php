@@ -2,6 +2,7 @@
 
 namespace App\Domains\Photo\Actions;
 
+
 use App\Domains\Photo\Repositories\PhotoEloquentRepository;
 use App\Models\Photo;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -14,6 +15,7 @@ class GetAllPhotoAction
     public function __invoke(string $cache_key = null): LengthAwarePaginator
     {
         //todo: get photo by tagging
+
         return Cache::remember(
             $cache_key ?: Photo::CACHE_KEY,
             86400,

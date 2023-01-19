@@ -19,7 +19,6 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 Route::group([
     'prefix' => 'v1/photos',
 ], function () {
-
     Route::group([
         'middleware' => 'auth:sanctum'
     ], function(){
